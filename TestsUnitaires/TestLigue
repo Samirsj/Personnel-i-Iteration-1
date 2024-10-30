@@ -1,0 +1,79 @@
+package testsUnitaires;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import personnel.*;
+
+class TestLigue 
+{
+    GestionPersonnel gestionPersonnel = GestionPersonnel.getGestionPersonnel();
+
+    @Test
+    void createLigue() throws SauvegardeImpossible
+    {
+        Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
+        assertEquals("Fléchettes", ligue.getNom());
+    }
+
+    @Test
+    void setLigue() throws SauvegardeImpossible {
+		
+		Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
+		ligue.setNom("Test");
+	}
+	
+    @Test
+    void suppressionEmploye() throws SauvegardeImpossible {
+        Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
+        Employe employe = ligue.addEmploye("Bouchard", "Gérard", "g.bouchard@gmail.com", "azerty");
+        
+        employe.remove();
+        assertFalse(ligue.getEmployes().contains(employe), "L'employé devrait être supprimé de la ligue");
+    }
+
+    @Test
+    void suppressionLigue() throws SauvegardeImpossible {
+        Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
+        Employe employe = ligue.addEmploye("Bouchard", "Gérard", "g.bouchard@gmail.com", "azerty");
+        
+        employe.remove();
+        assertFalse(ligue.getEmployes().contains(employe), "L'employé devrait être supprimé de la ligue");
+        
+        ligue.remove();
+        assertFalse(gestionPersonnel.getLigues().contains(ligue), "La ligue devrait être supprimée de la gestion du personnel");
+    }
+
+    @Test
+    void changementAdministrateur() throws SauvegardeImpossible {
+        Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
+        Employe administrateur = ligue.addEmploye("Bouchard", "Gérard", "g.bouchard@gmail.com", "azerty");
+        
+        ligue.setAdministrateur(administrateur);
+        assertEquals(administrateur, ligue.getAdministrateur(), "L'administrateur devrait être celui qui a été défini");
+        
+        administrateur.remove();
+        assertFalse(ligue.getEmployes().contains(administrateur), "L'administrateur devrait être supprimé de la ligue");
+    }
+
+    @Test
+    void employeGettersSetters() throws SauvegardeImpossible
+    {
+        // Getters
+        Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
+        Employe test = ligue.addEmploye("Essafi", "Samir", "mail", "azerty"); 
+        assertEquals("Samir", test.getPrenom());
+        assertEquals("mail", test.getMail());
+        assertEquals(ligue, test.getLigue());
+        
+        // Setters
+        test.setMail("nouveaumail");
+        assertEquals("nouveaumail", test.getMail());
+        test.setNom("nouveauNom");
+        assertEquals("nouveauNom", test.getNom());
+        test.setPassword("nouveaumdp");
+        assertTrue(test.checkPassword("nouveaumdp"));
+        test.setPrenom("nouveauprenom");
+        assertEquals("nouveauprenom", test.getPrenom());
+    }
+}
