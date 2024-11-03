@@ -22,6 +22,9 @@ public class Ligue implements Serializable, Comparable<Ligue>
 	private SortedSet<Employe> employes;
 	private Employe administrateur;
 	private GestionPersonnel gestionPersonnel;
+	private LocalDate dateArrivee = LocalDate.of(01, 01, 0000);
+	private LocalDate dateDepart = LocalDate.of(01, 01, 0000);
+
 	
 	/**
 	 * Crée une ligue.
@@ -109,14 +112,11 @@ public class Ligue implements Serializable, Comparable<Ligue>
 	 * @return l'employé créé. 
 	 */
 	
-	public Employe addEmploye(String nom, String prenom, String mail, String password, LocalDate dateentree, LocalDate datesortie)
-	{
-		Employe employe = new Employe(this.gestionPersonnel, this, nom, prenom, mail, password);
-		employe.setDatearrivee(datesortie); 
-		employe.setDatedepart(datesortie);
-		employes.add(employe);
-		return employe;
-	}
+	 public Employe addEmploye(String nom, String prenom, String mail, String password, LocalDate dateArrivee, LocalDate dateDepart) {
+        Employe employe = new Employe(this.gestionPersonnel, this, nom, prenom, mail, password, dateArrivee, dateDepart);
+        employes.add(employe);
+        return employe;
+    }
 	
 	void remove(Employe employe)
 	{
@@ -128,10 +128,16 @@ public class Ligue implements Serializable, Comparable<Ligue>
 	 * de la ligue.
 	 */
 	
-	public void remove()
-	{
-		gestionPersonnel.remove(this);
-	}
+	 public void remove()
+	 {
+		 gestionPersonnel.remove(this);
+		 try {
+			 gestionPersonnel.delete(this);
+		 }
+		 catch(SauvegardeImpossible e) {
+			 e.printStackTrace();
+		 }
+	 }
 	
 
 	@Override
