@@ -1,7 +1,6 @@
 package personnel;
 
 import java.io.Serializable;
-
 import java.time.LocalDate;
 
 /**
@@ -12,21 +11,25 @@ import java.time.LocalDate;
  * il faut passer la méthode {@link Ligue#addEmploye addEmploye}.
  */
 
-public class Employe implements Serializable, Comparable<Employe> {
-    private static final long serialVersionUID = 4795721718037994734L;
-    private String nom, prenom, password, mail;
-    private LocalDate dateArrivee, dateDepart;
-    private Ligue ligue;
-    private GestionPersonnel gestionPersonnel;
-
-    Employe(GestionPersonnel gestionPersonnel, Ligue ligue, String nom, String prenom, String mail, String password) {
-        this.gestionPersonnel = gestionPersonnel;
-        this.nom = nom;
-        this.prenom = prenom;
-        this.password = password;
-        this.mail = mail;
-        this.ligue = ligue;
-    }
+private static final long serialVersionUID = 4795721718037994734L;
+	private String nom, prenom, password, mail;
+	private Ligue ligue;
+	private GestionPersonnel gestionPersonnel;
+	private LocalDate dateArrivee = LocalDate.of(0000, 01, 01);
+	private LocalDate dateDepart = LocalDate.of(0000, 01, 01);
+	
+	Employe(GestionPersonnel gestionPersonnel, Ligue ligue, String nom, String prenom, String mail, String password, LocalDate dateArrivee, LocalDate dateDepart)
+	{
+		this.gestionPersonnel = gestionPersonnel;
+		this.nom = nom;
+		this.prenom = prenom;
+		this.mail = mail;
+		this.ligue = ligue;
+		this.password = password;
+		this.dateArrivee = (dateArrivee != null) ? dateArrivee : LocalDate.of(0, 1, 1);
+		this.dateDepart = (dateDepart != null) ? dateDepart : LocalDate.of(0, 1, 1);
+	}
+	
 
 
     /**
