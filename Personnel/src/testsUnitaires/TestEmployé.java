@@ -4,9 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import personnel.*;
 
+class testEmploye {
 
-public class testEmploye {
-	
 	GestionPersonnel gestionPersonnel = GestionPersonnel.getGestionPersonnel();
 	
 	@Test
@@ -43,5 +42,4 @@ public class testEmploye {
 		Employe employe = ligue.addEmploye("Bouchard", "Gérard", "g.bouchard@gmail.com", "azerty");
 		assertEquals("g.bouchard@gmail.com", employe.getMail());
 	}
-
 }
