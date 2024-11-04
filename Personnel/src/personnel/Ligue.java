@@ -1,10 +1,10 @@
 package personnel;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.time.LocalDate;
 
 /**
  * Représente une ligue. Chaque ligue est reliée à une liste
@@ -22,9 +22,6 @@ public class Ligue implements Serializable, Comparable<Ligue>
 	private SortedSet<Employe> employes;
 	private Employe administrateur;
 	private GestionPersonnel gestionPersonnel;
-	private LocalDate dateArrivee = LocalDate.of(01, 01, 0000);
-	private LocalDate dateDepart = LocalDate.of(01, 01, 0000);
-
 	
 	/**
 	 * Crée une ligue.
@@ -111,12 +108,13 @@ public class Ligue implements Serializable, Comparable<Ligue>
 	 * @param password le password de l'employé.
 	 * @return l'employé créé. 
 	 */
-	
-	 public Employe addEmploye(String nom, String prenom, String mail, String password, LocalDate dateArrivee, LocalDate dateDepart) {
-        Employe employe = new Employe(this.gestionPersonnel, this, nom, prenom, mail, password, dateArrivee, dateDepart);
-        employes.add(employe);
-        return employe;
-    }
+
+	public Employe addEmploye(String nom, String prenom, String mail, String password, LocalDate dateArrive, LocalDate dateDepart)
+	{
+		Employe employe = new Employe(this.gestionPersonnel, this, nom, prenom, mail, password, dateArrive, dateDepart);
+		employes.add(employe);
+		return employe;
+	}
 	
 	void remove(Employe employe)
 	{
@@ -128,16 +126,10 @@ public class Ligue implements Serializable, Comparable<Ligue>
 	 * de la ligue.
 	 */
 	
-	 public void remove()
-	 {
-		 gestionPersonnel.remove(this);
-		 try {
-			 gestionPersonnel.delete(this);
-		 }
-		 catch(SauvegardeImpossible e) {
-			 e.printStackTrace();
-		 }
-	 }
+	public void remove()
+	{
+		gestionPersonnel.remove(this);
+	}
 	
 
 	@Override
