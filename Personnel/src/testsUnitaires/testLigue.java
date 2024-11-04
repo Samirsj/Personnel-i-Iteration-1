@@ -1,147 +1,85 @@
-package personnel;
+package testsUnitaires;
 
-import java.io.Serializable;
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-/**
- * Représente une ligue. Chaque ligue est reliée à une liste
- * d'employés dont un administrateur. Comme il n'est pas possible
- * de créer un employé sans l'affecter à une ligue, le root est 
- * l'administrateur de la ligue jusqu'à ce qu'un administrateur 
- * lui ait été affecté avec la fonction {@link #setAdministrateur}.
- */
+import org.junit.jupiter.api.Test;
 
-public class Ligue implements Serializable, Comparable<Ligue>
+import personnel.*;
+
+class testLigue 
 {
-	private static final long serialVersionUID = 1L;
-	private int id = -1;
-	private String nom;
-	private SortedSet<Employe> employes;
-	private Employe administrateur;
-	private GestionPersonnel gestionPersonnel;
+	GestionPersonnel gestionPersonnel = GestionPersonnel.getGestionPersonnel();
 	
-	/**
-	 * Crée une ligue.
-	 * @param nom le nom de la ligue.
-	 */
-	
-	Ligue(GestionPersonnel gestionPersonnel, String nom) throws SauvegardeImpossible
+	@Test
+	void createLigue() throws SauvegardeImpossible
 	{
-		this(gestionPersonnel, -1, nom);
-		this.id = gestionPersonnel.insert(this); 
+		Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
+		assertEquals("Fléchettes", ligue.getNom());
 	}
 
-	Ligue(GestionPersonnel gestionPersonnel, int id, String nom)
+	@Test
+	void addEmploye() throws SauvegardeImpossible
 	{
-		this.nom = nom;
-		employes = new TreeSet<>();
-		this.gestionPersonnel = gestionPersonnel;
-		administrateur = gestionPersonnel.getRoot();
-		this.id = id;
-	}
-
-	/**
-	 * Retourne le nom de la ligue.
-	 * @return le nom de la ligue.
-	 */
-
-	public String getNom()
-	{
-		return nom;
-	}
-
-	/**
-	 * Change le nom.
-	 * @param nom le nouveau nom de la ligue.
-	 */
-
-	public void setNom(String nom)
-	{
-		this.nom = nom;
-	}
-
-	/**
-	 * Retourne l'administrateur de la ligue.
-	 * @return l'administrateur de la ligue.
-	 */
-	
-	public Employe getAdministrateur()
-	{
-		return administrateur;
-	}
-
-	/**
-	 * Fait de administrateur l'administrateur de la ligue.
-	 * Lève DroitsInsuffisants si l'administrateur n'est pas 
-	 * un employé de la ligue ou le root. Révoque les droits de l'ancien 
-	 * administrateur.
-	 * @param administrateur le nouvel administrateur de la ligue.
-	 */
-	
-	public void setAdministrateur(Employe administrateur)
-	{
-		Employe root = gestionPersonnel.getRoot();
-		if (administrateur != root && administrateur.getLigue() != this)
-			throw new DroitsInsuffisants();
-		this.administrateur = administrateur;
-	}
-
-	/**
-	 * Retourne les employés de la ligue.
-	 * @return les employés de la ligue dans l'ordre alphabétique.
-	 */
-	
-	public SortedSet<Employe> getEmployes()
-	{
-		return Collections.unmodifiableSortedSet(employes);
-	}
-
-	/**
-	 * Ajoute un employé dans la ligue. Cette méthode 
-	 * est le seul moyen de créer un employé.
-	 * @param nom le nom de l'employé.
-	 * @param prenom le prénom de l'employé.
-	 * @param mail l'adresse mail de l'employé.
-	 * @param password le password de l'employé.
-	 * @return l'employé créé. 
-	 */
-
-	public Employe addEmploye(String nom, String prenom, String mail, String password, String status, LocalDate dateArrivee, LocalDate dateDepart)
-	{
-		Employe employe = new Employe(this.gestionPersonnel, this, nom, prenom, mail, password, status, dateArrivee, dateDepart);
-		employes.add(employe);
-		return employe;
+		Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
+		Employe employe = ligue.addEmploye("Bouchard", "Gérard", "g.bouchard@gmail.com", "azerty", "test", LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 30)); 
+		assertEquals(employe, ligue.getEmployes().first());
 	}
 	
-	void remove(Employe employe)
-	{
-		employes.remove(employe);
+	@Test
+	void setEmploye() throws SauvegardeImpossible {
+		Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
+		Employe employe = ligue.addEmploye("Bouchard", "Gérard", "g.bouchard@gmail.com", "azerty" , "test", LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 30)); 
+		employe.setNom("test");
+		assertEquals("test" , employe.getNom());
 	}
 	
-	/**
-	 * Supprime la ligue, entraîne la suppression de tous les employés
-	 * de la ligue.
-	 */
-	
-	public void remove()
-	{
-		gestionPersonnel.remove(this);
+	@Test
+	void getNom() throws SauvegardeImpossible {
+		Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
+		assertEquals("Fléchettes", ligue.getNom());
 	}
 	
-
-	@Override
-	public int compareTo(Ligue autre)
-	{
-		return getNom().compareTo(autre.getNom());
+	@Test
+	void setNom() throws SauvegardeImpossible {
+		Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
+		ligue.setNom("Bowling");
+		assertEquals("Bowling", ligue.getNom());
 	}
 	
-	@Override
-	public String toString()
-	{
-		return nom;
+	
+	@Test
+	void getAdministrator() throws SauvegardeImpossible {
+		Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
+		Employe employe = ligue.addEmploye("Bouchard", "Gérard", "g.bouchard@gmail.com", "azerty", "test", LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 30)); 
+		ligue.setAdministrateur(employe);
+		assertEquals(employe, ligue.getAdministrateur());
 	}
+	@Test
+	void deleteAndChangeAdmin() throws SauvegardeImpossible{
+		Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
+		Employe employe;
+			 
+			employe = ligue.addEmploye("Bouchard", "Gérard", "g.bouchard@gmail.com", "azerty", "test", LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 30));
+			
+			ligue.setAdministrateur(employe);
+			assertEquals(employe, ligue.getAdministrateur());
+			
+			employe.remove();
+			assertFalse(ligue.getEmployes().contains(employe));
+		
+			assertFalse(ligue.getEmployes().contains(employe));
+			assertEquals(gestionPersonnel.getRoot() , ligue.getAdministrateur());
+			
+	}
+	
+	@Test
+	void deleteLigue() throws SauvegardeImpossible {
+		Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
+		ligue.remove();
+		assertFalse(gestionPersonnel.getLigues().contains(ligue));
+	}
+	
 }
 
