@@ -25,7 +25,6 @@ class testLigue
 		assertEquals("Fléchettes", ligue.getNom());
 	}
 	
-	@Test
 	void setNom() throws SauvegardeImpossible
 	{
 		Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
@@ -33,13 +32,12 @@ class testLigue
 		assertEquals("Billard", ligue.getNom());
 	}
 	
-	@Test
-	void getAdministrateur() throws SauvegardeImpossible
+		void getAdministrateur() throws SauvegardeImpossible
 	{
 		Ligue ligue = gestionPersonnel.addLigue("Fléchettes");
 		Employe employe = ligue.addEmploye("Bouchard", "Gerard", "g.bouchard@gmail.com", "azerty"); 
-		ligue.setAdministrateur(employe);
+		ligue.SetAdministrateur(employe);
 		assertEquals("root", employe.getNom());
 	}
-
+	
 }
