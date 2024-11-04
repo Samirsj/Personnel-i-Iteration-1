@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.time.LocalDate;
 
 /**
  * Représente une ligue. Chaque ligue est reliée à une liste
@@ -42,7 +41,7 @@ public class Ligue implements Serializable, Comparable<Ligue>
 		administrateur = gestionPersonnel.getRoot();
 		this.id = id;
 	}
-
+	
 	/**
 	 * Retourne le nom de la ligue.
 	 * @return le nom de la ligue.
@@ -109,9 +108,9 @@ public class Ligue implements Serializable, Comparable<Ligue>
 	 * @return l'employé créé. 
 	 */
 
-	public Employe addEmploye(String nom, String prenom, String mail, String password, LocalDate dateArrive, LocalDate dateDepart)
+	public Employe addEmploye(String nom, String prenom, String mail, String password) 
 	{
-		Employe employe = new Employe(this.gestionPersonnel, this, nom, prenom, mail, password, dateArrive, dateDepart);
+		Employe employe = new Employe(this.gestionPersonnel, this, nom, prenom, mail, password);
 		employes.add(employe);
 		return employe;
 	}
