@@ -144,3 +144,4 @@ public class Ligue implements Serializable, Comparable<Ligue>
 		return nom;
 	}
 }
+
