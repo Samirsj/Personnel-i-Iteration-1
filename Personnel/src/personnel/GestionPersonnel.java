@@ -94,16 +94,6 @@ public class GestionPersonnel implements Serializable
 		return ligue;
 	}
 
-	void update(Employe employe) throws SauvegardeImpossible
-	{
-		passerelle.update(employe);
-	}
-	
-	void update(Ligue ligue) throws SauvegardeImpossible
-	{
-		passerelle.update(ligue);
-	}
-
 	void remove(Ligue ligue)
 	{
 		ligues.remove(ligue);

@@ -1,9 +1,14 @@
 package personnel;
 
 import java.io.Serializable;
-import java.util.Collections;
+
+import java.time.LocalDate;
+
 import java.util.SortedSet;
+
 import java.util.TreeSet;
+
+
 
 /**
  * Représente une ligue. Chaque ligue est reliée à une liste
@@ -41,7 +46,7 @@ public class Ligue implements Serializable, Comparable<Ligue>
 		administrateur = gestionPersonnel.getRoot();
 		this.id = id;
 	}
-	
+
 	/**
 	 * Retourne le nom de la ligue.
 	 * @return le nom de la ligue.
@@ -95,8 +100,12 @@ public class Ligue implements Serializable, Comparable<Ligue>
 	
 	public SortedSet<Employe> getEmployes()
 	{
-		return Collections.unmodifiableSortedSet(employes);
+		return employes;
 	}
+	
+	
+	
+	
 
 	/**
 	 * Ajoute un employé dans la ligue. Cette méthode 
@@ -108,9 +117,11 @@ public class Ligue implements Serializable, Comparable<Ligue>
 	 * @return l'employé créé. 
 	 */
 
-	public Employe addEmploye(String nom, String prenom, String mail, String password) 
+	public Employe addEmploye(String nom, String prenom, String mail, String password , LocalDate dateArrivee , LocalDate Datedepart)
+	throws ExceptionD
 	{
-		Employe employe = new Employe(this.gestionPersonnel, this, nom, prenom, mail, password);
+	
+		Employe employe = new Employe(this.gestionPersonnel, this, nom, prenom, mail, password , dateArrivee , Datedepart);
 		employes.add(employe);
 		return employe;
 	}

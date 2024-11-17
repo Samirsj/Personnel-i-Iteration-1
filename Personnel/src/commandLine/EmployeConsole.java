@@ -7,6 +7,7 @@ import commandLineMenus.Menu;
 import commandLineMenus.Option;
 import personnel.Employe;
 
+
 public class EmployeConsole 
 {
 	private Option afficher(final Employe employe)
