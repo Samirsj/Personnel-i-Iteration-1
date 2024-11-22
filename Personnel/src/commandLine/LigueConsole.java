@@ -85,7 +85,13 @@ public class LigueConsole
 				() -> {ligue.setNom(getString("Nouveau nom : "));});
 	}
 	
-
+	private List<Employe> selectionnerEmployé(final Ligue ligue)
+	{
+		return new List<>("Sélectionner un employé", "s", 
+				() -> new ArrayList<>(ligue.getEmployes()),
+				employeConsole.editerEmploye()
+				);
+	}
 
 	private Option ajouterEmploye(final Ligue ligue)
 	{
