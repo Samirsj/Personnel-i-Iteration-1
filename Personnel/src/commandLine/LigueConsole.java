@@ -133,16 +133,37 @@ public class LigueConsole
 	
 	
 	private List<Employe> selectEmploye(Ligue ligue){
-		return new List<Employe>("Selectionner un employer" , "s" , () -> new ArrayList(ligue.getEmployes()) , (nb) -> suppOuEditEmploye(ligue , nb));
+		return new List<Employe>("Selectionner un employer" , "s" , () -> new ArrayList(ligue.getEmployes()) , (nb) -> gererEmploye(ligue , nb));
 	}
 	
-	private Menu suppOuEditEmploye(Ligue ligue , Employe employe) {
-		Menu menu = new Menu("Editer Employe "+ employe.getNom() + " " + employe.getPrenom() + " de chez " + ligue.getNom());
-		menu.add(modifierEmploye(ligue , employe));
-		menu.add(supprimerEmploye(ligue, employe));
-		menu.addBack("q");
-		return menu;
-		
+	private List<Employe> selectEmploye(Ligue ligue){
+		return new List<Employe>("Selectionner un employer" , "s" , () -> new ArrayList(ligue.getEmployes()) , (nb) -> gererEmploye(ligue , nb));
+	}
+	
+	private Menu gererEmploye(Ligue ligue, Employe employe) {
+	    Menu menu = new Menu("Gérer l'employé " + employe.getNom() + " " + employe.getPrenom() + " de la ligue " + ligue.getNom());
+	    
+	    
+	    menu.add(new Option("Modifier l'employé", "m", 
+	        () -> {
+	            System.out.println("Modification de l'employé " + employe.getNom());
+	            employe.setNom(getString("Nouveau nom : "));
+	            employe.setPrenom(getString("Nouveau prénom : "));
+	            employe.setMail(getString("Nouveau mail : "));
+	            employe.setPassword(getString("Nouveau mot de passe : "));
+	        })
+	    );
+
+	   
+	    menu.add(new Option("Supprimer l'employé", "s", 
+	        () -> {
+	            ligue.getEmployes().remove(employe);
+	            System.out.println("L'employé a été supprimé.");
+	        })
+	    );
+
+	    menu.addBack("q");
+	    return menu;
 	}
 	
 	
