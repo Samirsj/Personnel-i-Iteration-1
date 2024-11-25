@@ -4,6 +4,7 @@ import static commandLineMenus.rendering.examples.util.InOut.getString;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.time.format.DateTimeParseException;
 
 import commandLineMenus.List;
 import commandLineMenus.Menu;
@@ -106,12 +107,14 @@ public class LigueConsole
 							);
 					} catch (ExceptionD e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						System.out.println("Erreur : La date de départ ne peut pas être avant la date d'arrivée.");
 					}
+					catch (DateTimeParseException s) {
+						System.out.println("Format invalide. Veuillez entrer une date au format yyyy-MM-dd.");			}
 				}
 		);
 	}
-	
+
 	private Menu gererEmployes(Ligue ligue)
 	{
 		Menu menu = new Menu("Gérer les employés de " + ligue.getNom(), "e");
