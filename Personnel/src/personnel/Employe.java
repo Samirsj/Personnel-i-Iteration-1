@@ -19,6 +19,7 @@ public class Employe implements Serializable, Comparable<Employe>
     private GestionPersonnel gestionPersonnel;
     private LocalDate dateArrive;
     private LocalDate dateDepart;
+    private int id;
 
     Employe(GestionPersonnel gestionPersonnel, Ligue ligue, String nom, String prenom, String mail, String password, LocalDate dateArrive, LocalDate dateDepart)
             throws ExceptionD
@@ -59,6 +60,11 @@ public class Employe implements Serializable, Comparable<Employe>
      * @param ligue la ligue pour laquelle on souhaite vérifier si this
      * est l'admininstrateur.
      */
+    public int getId() 
+    {
+        return id;    
+    }
+
 
     public boolean estAdmin(Ligue ligue)
     {

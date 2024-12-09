@@ -87,4 +87,67 @@ public class JDBC implements Passerelle
 			throw new SauvegardeImpossible(exception);
 		}		
 	}
+
+	@Override
+public int insert(Employe employe) throws SauvegardeImpossible 
+{
+   
+    PreparedStatement instruction = null;
+    ResultSet generatedKeys = null;
+    
+    try 
+    {
+       
+        instruction = connection.prepareStatement(
+            "INSERT INTO employe (nom, prenom, mail, password, fonction, date_arrivee, date_depart, id_ligue) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS
+        );
+        
+       
+        instruction.setString(1, employe.getNom());
+        instruction.setString(2, employe.getPrenom());
+        instruction.setString(3, employe.getMail());
+        instruction.setString(4, employe.getPassword());
+        
+        
+        String fonction = (employe.estAdmin(employe.getLigue())) ? "Admin" : "Employé";
+        instruction.setString(5, fonction);
+        
+       
+        instruction.setDate(6, java.sql.Date.valueOf(employe.getDateArrivee()));
+        instruction.setDate(7, java.sql.Date.valueOf(employe.getDateDepart()));
+        
+       
+        int ligueId = (employe.getLigue() != null) ? employe.getLigue().getId() : 0;
+        instruction.setInt(8, ligueId);
+        
+       
+        instruction.executeUpdate();
+        
+       
+        generatedKeys = instruction.getGeneratedKeys();
+        
+        
+        if (generatedKeys.next()) {
+            return generatedKeys.getInt(1); 
+        } else {
+            throw new SauvegardeImpossible("Aucun ID généré pour l'employé.");
+        }
+    } 
+    catch (SQLException exception) 
+    {
+        
+        exception.printStackTrace();
+        throw new SauvegardeImpossible(exception);
+    } 
+    finally 
+    {
+      
+        try {
+            if (generatedKeys != null) generatedKeys.close();
+            if (instruction != null) instruction.close();
+        } catch (SQLException e) {
+            e.printStackTrace(); 
+        }
+    }
 }
