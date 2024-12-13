@@ -23,7 +23,7 @@ public class GestionPersonnel implements Serializable
 	private Employe root = new Employe(this, null, "root", "", "", "toor");
 	public final static int SERIALIZATION = 1, JDBC = 2, 
 
-			TYPE_PASSERELLE = JDBC;  
+			TYPE_PASSERELLE = SERIALIZATION;  
 
 	private static Passerelle passerelle = TYPE_PASSERELLE == JDBC ? new jdbc.JDBC() : new serialisation.Serialization();	
 	
@@ -106,11 +106,12 @@ public class GestionPersonnel implements Serializable
 		return passerelle.insert(ligue);
 	}
 
-	int insert(Employe employe) throws SauvegardeImpossible
+	/*int insert(Employe employe) throws SauvegardeImpossible
 	{
 		return passerelle.insert(employe);
 	}
-
+	*/
+	
 	/**
 	 * Retourne le root (super-utilisateur).
 	 * @return le root.
