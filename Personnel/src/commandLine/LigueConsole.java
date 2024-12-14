@@ -86,13 +86,13 @@ public class LigueConsole
 				() -> {ligue.setNom(getString("Nouveau nom : "));});
 	}
 	
-	private List<Employe> selectionnerEmployé(final Ligue ligue)
+	private Option selectionnerEmployé(Ligue ligue)
 	{
-		return new List<>("Sélectionner un employé", "s", 
-				() -> new ArrayList<>(ligue.getEmployes()),
-				employeConsole.editerEmploye()
-				);
+	    return new List<>("Selectionner un employé", "s", 
+	            () -> new ArrayList<>(ligue.getEmployes()),
+	            employe -> editerEmployer(employe));
 	}
+
 
 	private Option ajouterEmploye(final Ligue ligue)
 	{
@@ -135,45 +135,20 @@ public class LigueConsole
 	}
 	
 	
-	private Menu gererEmploye(Ligue ligue, Employe employe) {
-	    Menu menu = new Menu("Gérer l'employé " + employe.getNom() + " " + employe.getPrenom() + " de la ligue " + ligue.getNom());
-	    
-	    
-	    menu.add(new Option("Modifier l'employé", "m", 
-	        () -> {
-	            System.out.println("Modification de l'employé " + employe.getNom());
-	            employe.setNom(getString("Nouveau nom : "));
-	            employe.setPrenom(getString("Nouveau prénom : "));
-	            employe.setMail(getString("Nouveau mail : "));
-	            employe.setPassword(getString("Nouveau mot de passe : "));
-	        })
-	    );
-
-	   
-	    menu.add(new Option("Supprimer l'employé", "s", 
-	        () -> {
-	            ligue.getEmployes().remove(employe);
-	            System.out.println("L'employé a été supprimé.");
-	        })
-	    );
-
-	    menu.addBack("q");
-	    return menu;
+	private Menu editerEmployer(Employe employe) {
+		Menu menu = new Menu("Gerer :" + employe.getNom());
+		menu.add(modifierEmploye(employe));
+		menu.add(supprimerEmploye(employe));
+		menu.addBack("q");
+		return menu;
 	}
 	
-	
-	private Option supprimerEmploye(final Ligue ligue, Employe employe)
+	private Option supprimerEmploye(final Employe employe)
 	{
-		return new Option("Supprimer l'employer" , "s" , () -> suppEmployeRetour(ligue , employe));
-			
+		return new Option("Supprimer Employé", "s" , () -> employe.remove());
 	}
 	
-	private void suppEmployeRetour(Ligue ligue , Employe employe) 
-	
-	{
-		ligue.getEmployes().remove(employe);
-	
-	}
+
 	
 	private List<Employe> changerAdministrateur(final Ligue ligue)
 	{
@@ -186,13 +161,12 @@ public class LigueConsole
 	    );
 	}
 	
+	private Option modifierEmploye(final Employe employe)
+	{
+		return employeConsole.editerEmploye(employe);
+	}
 	
 
-	private Option modifierEmploye(final Ligue ligue, Employe employe)
-	{
-		EmployeConsole test = new EmployeConsole();
-		return test.editerEmploye(employe);
-	}
 	
 	private Option supprimer(Ligue ligue)
 	{
