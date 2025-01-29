@@ -35,7 +35,7 @@ public class Ligue implements Serializable, Comparable<Ligue>
 	Ligue(GestionPersonnel gestionPersonnel, String nom) throws SauvegardeImpossible
 	{
 		this(gestionPersonnel, -1, nom);
-		this.id = gestionPersonnel.insert(this); 
+		this.id = gestionPersonnel.insert(this); // Mise à jour
 	}
 
 	Ligue(GestionPersonnel gestionPersonnel, int id, String nom)
@@ -65,6 +65,7 @@ public class Ligue implements Serializable, Comparable<Ligue>
 	public void setNom(String nom)
 	{
 		this.nom = nom;
+		gestionPersonnel.update(this);
 	}
 
 	/**
@@ -91,6 +92,7 @@ public class Ligue implements Serializable, Comparable<Ligue>
 		if (administrateur != root && administrateur.getLigue() != this)
 			throw new DroitsInsuffisants();
 		this.administrateur = administrateur;
+		gestionPersonnel.update(this); // Mise à jour
 	}
 
 	/**

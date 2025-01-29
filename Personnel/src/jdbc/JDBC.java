@@ -31,7 +31,7 @@ public class JDBC implements Passerelle
 	}
 	
 	@Override
-public GestionPersonnel getGestionPersonnel() {
+	public GestionPersonnel getGestionPersonnel() {
     GestionPersonnel gestionPersonnel = new GestionPersonnel();
 
     try {
@@ -140,6 +140,22 @@ public GestionPersonnel getGestionPersonnel() {
 		// Retourne -1 si une erreur
 		return -1;
 	}
-	
-	
+
+	@Override
+	public void update(Ligue ligue) throws SauvegardeImpossible {
+
+    	try {
+       	 	PreparedStatement instruction;
+        	instruction = connection.prepareStatement("UPDATE ligue SET nom = ? WHERE id = ?");
+        	instruction.setString(1, ligue.getNom());
+        	instruction.setInt(2, ligue.getId());
+        	instruction.executeUpdate();
+
+    	} catch (SQLException exception) {
+        	exception.printStackTrace();
+        	throw new SauvegardeImpossible(exception);
+    	}
+	}
 }
+	
+	
