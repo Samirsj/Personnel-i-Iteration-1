@@ -58,6 +58,11 @@ public class GestionPersonnel implements Serializable
 		passerelle.sauvegarderGestionPersonnel(this);
 	}
 
+	public void update(Employe employe) throws SauvegardeImpossible 
+	{
+        passerelle.update(employe);
+    }
+
 
 	 /**
      * Crée un super-utilisateur  à partir du nom et du mot de passe fournis

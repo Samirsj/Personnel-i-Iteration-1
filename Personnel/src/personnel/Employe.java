@@ -134,6 +134,7 @@ public class Employe implements Serializable, Comparable<Employe>
     public void setNom(String nom)
     {
         this.nom = nom;
+        gestionPersonnel.update(this);
     }
 
     /**
@@ -154,6 +155,7 @@ public class Employe implements Serializable, Comparable<Employe>
     public void setPrenom(String prenom)
     {
         this.prenom = prenom;
+        gestionPersonnel.update(this);
     }
 
     /**
@@ -174,6 +176,7 @@ public class Employe implements Serializable, Comparable<Employe>
     public void setMail(String mail)
     {
         this.mail = mail;
+        gestionPersonnel.update(this);
     }
     /**
      * Retourne la date d'arrivée de l'employé.
@@ -198,7 +201,9 @@ public class Employe implements Serializable, Comparable<Employe>
         }
         else {
 
-            this.dateArrive = dateArrive;}
+            this.dateArrive = dateArrive;
+            gestionPersonnel.update(this);
+        }
     }
 
     /**
@@ -223,7 +228,9 @@ public class Employe implements Serializable, Comparable<Employe>
             throw new ExceptionD();
         }
         else {
-            this.dateDepart = dateDepart;}
+            this.dateDepart = dateDepart;
+            gestionPersonnel.update(this);
+        }   
     }
 
 
@@ -252,6 +259,7 @@ public class Employe implements Serializable, Comparable<Employe>
     public void setPassword(String password)
     {
         this.password= password;
+        gestionPersonnel.update(this);
     }
 
     /**
