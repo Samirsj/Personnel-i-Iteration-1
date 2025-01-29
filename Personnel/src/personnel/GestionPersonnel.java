@@ -1,6 +1,7 @@
 package personnel;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -20,7 +21,7 @@ public class GestionPersonnel implements Serializable
 	private static final long serialVersionUID = -105283113987886425L;
 	private static GestionPersonnel gestionPersonnel = null;
 	private SortedSet<Ligue> ligues;
-	private Employe root = new Employe(this, null, "root", "", "", "toor");
+	private Employe root;// Supprime par défaut
 	public final static int SERIALIZATION = 1, JDBC = 2, 
 
 			TYPE_PASSERELLE = JDBC;  
@@ -56,6 +57,27 @@ public class GestionPersonnel implements Serializable
 	{
 		passerelle.sauvegarderGestionPersonnel(this);
 	}
+
+
+	 /**
+     * Crée un super-utilisateur  à partir du nom et du mot de passe fournis
+     */
+
+	public Employe addRoot(String nom, String password) throws SauvegardeImpossible {
+        // Vérifie si le root existe déjà 
+        if (root != null) {
+            throw new IllegalStateException("Un root existe déjà !");
+        }
+
+        try {
+            // Création du root
+            root = new Employe(this, null, nom, "", "", password);
+            return root;
+        } catch (Exception e) {
+            throw new SauvegardeImpossible("Erreur lors de la création du root.", e);
+        }
+    }
+	
 	
 	/**
 	 * Retourne la ligue dont administrateur est l'administrateur,
@@ -106,12 +128,11 @@ public class GestionPersonnel implements Serializable
 		return passerelle.insert(ligue);
 	}
 
-	/*int insert(Employe employe) throws SauvegardeImpossible
+	int insert(Employe employe) throws SauvegardeImpossible
 	{
 		return passerelle.insert(employe);
 	}
-	*/
-	
+
 	/**
 	 * Retourne le root (super-utilisateur).
 	 * @return le root.

@@ -87,4 +87,37 @@ public class JDBC implements Passerelle
 			throw new SauvegardeImpossible(exception);
 		}		
 	}
+	
+	@Override
+	public int insert(Employe employe) {
+		String query = "INSERT INTO employe (nom, prenom, mail, password, dateArrive, dateDepart, ligue_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+	
+		try (PreparedStatement instruction = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+			// Remplissage des paramètres
+			instruction.setString(1, employe.getNom());
+			instruction.setString(2, employe.getPrenom());
+			instruction.setString(3, employe.getMail());
+			instruction.setString(4, employe.getPassword());
+			instruction.setDate(5, employe.getDateArrivee() != null ? java.sql.Date.valueOf(employe.getDateArrivee()) : null);
+			instruction.setDate(6, employe.getDateDepart() != null ? java.sql.Date.valueOf(employe.getDateDepart()) : null);
+			instruction.setObject(7, employe.getLigue() != null ? employe.getLigue().getId() : null);
+	
+			
+			instruction.executeUpdate();
+	
+			// Récupération de l'ID généré
+			try (ResultSet id = instruction.getGeneratedKeys()) {
+				if (id.next()) {
+					return id.getInt(1); // Retourne l'ID
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace(); 
+		}
+	
+		// Retourne -1 si une erreur
+		return -1;
+	}
+	
+	
 }
