@@ -31,23 +31,45 @@ public class JDBC implements Passerelle
 	}
 	
 	@Override
-	public GestionPersonnel getGestionPersonnel() 
-	{
-		GestionPersonnel gestionPersonnel = new GestionPersonnel();
-		try 
-		{
-			String requete = "select * from ligue";
-			Statement instruction = connection.createStatement();
-			ResultSet ligues = instruction.executeQuery(requete);
-			while (ligues.next())
-				gestionPersonnel.addLigue(ligues.getInt(1), ligues.getString(2));
-		}
-		catch (SQLException e)
-		{
-			System.out.println(e);
-		}
-		return gestionPersonnel;
-	}
+public GestionPersonnel getGestionPersonnel() {
+    GestionPersonnel gestionPersonnel = new GestionPersonnel();
+
+    try {
+        // 1. Charger les ligues 
+        String requeteLigue = "SELECT * FROM ligue";
+        Statement instructionLigue = connection.createStatement();
+        ResultSet ligues = instructionLigue.executeQuery(requeteLigue);
+        while (ligues.next()) {
+            gestionPersonnel.addLigue(ligues.getInt("id"), ligues.getString("nom"));
+        }
+
+        // 2. Charger le root 
+        String requeteRoot = "SELECT * FROM employe WHERE nom = 'root' LIMIT 1";
+        Statement instructionRoot = connection.createStatement();
+        ResultSet rootResult = instructionRoot.executeQuery(requeteRoot);
+
+        if (rootResult.next()) {
+            // Récupération des informations du root
+            int id = rootResult.getInt("id");
+            String nom = rootResult.getString("nom");
+            String prenom = rootResult.getString("prenom");
+            String mail = rootResult.getString("mail");
+            String password = rootResult.getString("password");
+            LocalDate dateArrivee = rootResult.getDate("dateArrive") != null ? rootResult.getDate("dateArrive").toLocalDate() : null;
+            LocalDate dateDepart = rootResult.getDate("dateDepart") != null ? rootResult.getDate("dateDepart").toLocalDate() : null;
+
+            
+            Employe rootEmploye = new Employe(gestionPersonnel, id, null, nom, prenom, mail, password, dateArrivee, dateDepart);
+            gestionPersonnel.setRoot(rootEmploye);
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        System.out.println("Erreur lors du chargement des données depuis la base.");
+    }
+
+    return gestionPersonnel;
+}
 
 	@Override
 	public void sauvegarderGestionPersonnel(GestionPersonnel gestionPersonnel) throws SauvegardeImpossible 

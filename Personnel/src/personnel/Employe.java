@@ -13,6 +13,10 @@ import java.time.LocalDate;
  * il faut passer la méthode {@link Ligue#addEmploye addEmploye}.
  */
 
+     /**
+     * Constructeur principal pour ajouter un employé avec toutes ses données
+     */
+
 public class Employe implements Serializable, Comparable<Employe>
 {
     private static final long serialVersionUID = 4795721718037994734L;
@@ -58,6 +62,27 @@ public class Employe implements Serializable, Comparable<Employe>
             throws SauvegardeImpossible, ExceptionD {
         this(gestionPersonnel, ligue, nom, prenom, mail, password, null, null);
     }
+
+     /**
+     * Constructeur spécial pour ajouter le Root
+     */
+
+    public Employe(GestionPersonnel gestionPersonnel, String nom, String password) throws SauvegardeImpossible {
+        this.gestionPersonnel = gestionPersonnel;
+        this.nom = nom;
+        this.password = password;
+        this.prenom = "";
+        this.mail = "";
+        this.ligue = null; // Le root n'est pas lié à une ligue
+
+        // Insérer base de données
+        try {
+            this.id = gestionPersonnel.insert(this);
+        } catch (Exception e) {
+            throw new SauvegardeImpossible("Erreur lors de l'insertion du Root en base", e);
+        }
+    }
+
 
     /**
      * Retourne vrai ssi l'employé est administrateur de la ligue
