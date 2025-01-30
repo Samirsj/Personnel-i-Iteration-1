@@ -34,44 +34,73 @@ public class JDBC implements Passerelle
 	
 	@Override
 	public GestionPersonnel getGestionPersonnel() {
-    GestionPersonnel gestionPersonnel = new GestionPersonnel();
+	    GestionPersonnel gestionPersonnel = new GestionPersonnel();
 
-    try {
-        // 1. Charger les ligues 
-        String requeteLigue = "SELECT * FROM ligue";
-        Statement instructionLigue = connection.createStatement();
-        ResultSet ligues = instructionLigue.executeQuery(requeteLigue);
-        while (ligues.next()) {
-            gestionPersonnel.addLigue(ligues.getInt("id"), ligues.getString("nom"));
-        }
+	    try {
+	        // Charger les ligues avec leurs employés
+	        String requete = "SELECT l.ID_Ligue, l.Nom_Ligue, e.ID_Employé, e.Nom_Employé, e.Prenom_Employé, " +
+	                         "e.Mail_Employé, e.MDP_Employé, e.Date_Arrivee, e.Date_Depart " +
+	                         "FROM ligue l " +
+	                         "LEFT JOIN employe e ON l.ID_Ligue = e.ID_Ligue " +
+	                         "ORDER BY l.ID_Ligue";
 
-        // 2. Charger le root 
-        String requeteRoot = "SELECT * FROM employe WHERE Nom_Employé = 'root' LIMIT 1";
-        Statement instructionRoot = connection.createStatement();
-        ResultSet rootResult = instructionRoot.executeQuery(requeteRoot);
+	        Statement instruction = connection.createStatement();
+	        ResultSet resultSet = instruction.executeQuery(requete);
 
-        if (rootResult.next()) {
-            // Récupération des informations du root
-            int id = rootResult.getInt("ID_Employé");
-            String nom = rootResult.getString("Nom_Employé");
-            String prenom = rootResult.getString("Prenom_Employé");
-            String mail = rootResult.getString("Mail_Employé");
-            String password = rootResult.getString("MDP_Employé");
-            LocalDate dateArrivee = rootResult.getDate("Date_Arrivee") != null ? rootResult.getDate("Date_Arrivee").toLocalDate() : null;
-            LocalDate dateDepart = rootResult.getDate("Date_Depart") != null ? rootResult.getDate("Date_Depart").toLocalDate() : null;
+	        Ligue ligueActuelle = null;
+	        int lastLigueId = -1; // Pour suivre la dernière ligue insérée
 
-            Employe rootEmploye = new Employe(gestionPersonnel, id, null, nom, prenom, mail, password, dateArrivee, dateDepart);
-            gestionPersonnel.setRoot(rootEmploye);
-        }
+	        while (resultSet.next()) {
+	            int idLigue = resultSet.getInt("ID_Ligue");
+	            String nomLigue = resultSet.getString("Nom_Ligue");
+
+	            // Si la ligue change alors nouvel objet Ligue
+	            if (idLigue != lastLigueId) {
+	                ligueActuelle = gestionPersonnel.addLigue(idLigue, nomLigue);
+	                lastLigueId = idLigue;
+	            }
+
+	            // Vérifier si l'employé est présent
+	            if (resultSet.getObject("ID_Employé") != null) {
+	                int idEmploye = resultSet.getInt("ID_Employé");
+	                String nomEmploye = resultSet.getString("Nom_Employé");
+	                String prenomEmploye = resultSet.getString("Prenom_Employé");
+	                String mailEmploye = resultSet.getString("Mail_Employé");
+	                String passwordEmploye = resultSet.getString("MDP_Employé");
+	                LocalDate dateArrivee = resultSet.getDate("Date_Arrivee") != null ? resultSet.getDate("Date_Arrivee").toLocalDate() : null;
+	                LocalDate dateDepart = resultSet.getDate("Date_Depart") != null ? resultSet.getDate("Date_Depart").toLocalDate() : null;
+
+	                Employe employe = new Employe(gestionPersonnel, idEmploye, ligueActuelle, nomEmploye, prenomEmploye, mailEmploye, passwordEmploye, dateArrivee, dateDepart);
+	                ligueActuelle.getEmployes().add(employe);
+	            }
+	        }
+
+	        // Charger le root 
+	        String requeteRoot = "SELECT * FROM employe WHERE Nom_Employé = 'root' LIMIT 1";
+	        Statement instructionRoot = connection.createStatement();
+	        ResultSet rootResult = instructionRoot.executeQuery(requeteRoot);
+
+	        if (rootResult.next()) {
+	            int id = rootResult.getInt("ID_Employé");
+	            String nom = rootResult.getString("Nom_Employé");
+	            String prenom = rootResult.getString("Prenom_Employé");
+	            String mail = rootResult.getString("Mail_Employé");
+	            String password = rootResult.getString("MDP_Employé");
+	            LocalDate dateArrivee = rootResult.getDate("Date_Arrivee") != null ? rootResult.getDate("Date_Arrivee").toLocalDate() : null;
+	            LocalDate dateDepart = rootResult.getDate("Date_Depart") != null ? rootResult.getDate("Date_Depart").toLocalDate() : null;
+
+	            Employe rootEmploye = new Employe(gestionPersonnel, id, null, nom, prenom, mail, password, dateArrivee, dateDepart);
+	            gestionPersonnel.setRoot(rootEmploye);
+	        }
 
 
-    } catch (SQLException e) {
-        e.printStackTrace();
-        System.out.println("Erreur lors du chargement des données depuis la base.");
-    }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        System.out.println("Erreur lors du chargement des données depuis la base.");
+	    }
 
-    return gestionPersonnel;
-}
+	    return gestionPersonnel;
+	}
 
 	@Override
 	public void sauvegarderGestionPersonnel(GestionPersonnel gestionPersonnel) throws SauvegardeImpossible 
