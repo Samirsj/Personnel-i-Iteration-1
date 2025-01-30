@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+
 
 import personnel.*;
 
@@ -44,24 +46,24 @@ public class JDBC implements Passerelle
         }
 
         // 2. Charger le root 
-        String requeteRoot = "SELECT * FROM employe WHERE nom = 'root' LIMIT 1";
+        String requeteRoot = "SELECT * FROM employe WHERE Nom_Employé = 'root' LIMIT 1";
         Statement instructionRoot = connection.createStatement();
         ResultSet rootResult = instructionRoot.executeQuery(requeteRoot);
 
         if (rootResult.next()) {
             // Récupération des informations du root
-            int id = rootResult.getInt("id");
-            String nom = rootResult.getString("nom");
-            String prenom = rootResult.getString("prenom");
-            String mail = rootResult.getString("mail");
-            String password = rootResult.getString("password");
-            LocalDate dateArrivee = rootResult.getDate("dateArrive") != null ? rootResult.getDate("dateArrive").toLocalDate() : null;
-            LocalDate dateDepart = rootResult.getDate("dateDepart") != null ? rootResult.getDate("dateDepart").toLocalDate() : null;
+            int id = rootResult.getInt("ID_Employé");
+            String nom = rootResult.getString("Nom_Employé");
+            String prenom = rootResult.getString("Prenom_Employé");
+            String mail = rootResult.getString("Mail_Employé");
+            String password = rootResult.getString("MDP_Employé");
+            LocalDate dateArrivee = rootResult.getDate("Date_Arrivee") != null ? rootResult.getDate("Date_Arrivee").toLocalDate() : null;
+            LocalDate dateDepart = rootResult.getDate("Date_Depart") != null ? rootResult.getDate("Date_Depart").toLocalDate() : null;
 
-            
             Employe rootEmploye = new Employe(gestionPersonnel, id, null, nom, prenom, mail, password, dateArrivee, dateDepart);
             gestionPersonnel.setRoot(rootEmploye);
         }
+
 
     } catch (SQLException e) {
         e.printStackTrace();
@@ -96,7 +98,7 @@ public class JDBC implements Passerelle
 		try 
 		{
 			PreparedStatement instruction;
-			instruction = connection.prepareStatement("insert into ligue (nom) values(?)", Statement.RETURN_GENERATED_KEYS);
+			instruction = connection.prepareStatement("insert into ligue (Nom_Ligue) values(?)", Statement.RETURN_GENERATED_KEYS);
 			instruction.setString(1, ligue.getNom());		
 			instruction.executeUpdate();
 			ResultSet id = instruction.getGeneratedKeys();

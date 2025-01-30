@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+
 /**
  * Gestion du personnel. Un seul objet de cette classe existe.
  * Il n'est pas possible d'instancier directement cette classe, 
@@ -143,10 +144,14 @@ public class GestionPersonnel implements Serializable
 	 * @return le root.
 	 */
 	
-	public Employe getRoot()
-	{
-		return root;
+	public void setRoot(Employe root) {
+	    this.root = root;
 	}
+
+	public Employe getRoot() {
+	    return root;
+	}
+
 
 	public void update(Ligue ligue) throws SauvegardeImpossible
 	{
