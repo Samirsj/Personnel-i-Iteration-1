@@ -162,7 +162,7 @@ public class GestionPersonnel implements Serializable
 		return root;
 	}
 	
-	Ajoutez la méthode removeRoot si nécessaire pour empêcher la suppression accidentelle du root
+	//Ajoutez la méthode removeRoot si nécessaire pour empêcher la suppression accidentelle du root
 	public void removeRoot() {
 		if (root != null) {
 			throw new ImpossibleDeSupprimerRoot();
