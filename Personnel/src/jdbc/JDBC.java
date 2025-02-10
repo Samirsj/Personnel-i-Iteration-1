@@ -38,8 +38,8 @@ public class JDBC implements Passerelle
 
 	    try {
 	        // Charger les ligues avec leurs employés
-	        String requete = "SELECT l.ID_Ligue, l.Nom_Ligue, e.ID_Employé, e.Nom_Employé, e.Prenom_Employé, " +
-	                         "e.Mail_Employé, e.MDP_Employé, e.Date_Arrivee, e.Date_Depart " +
+	        String requete = "SELECT l.ID_Ligue, l.Nom_Ligue, e.ID_Employe, e.Nom_Employe, e.Prenom_Employe, " +
+	                         "e.Mail_Employe, e.MDP_Employe, e.Date_Arrivee, e.Date_Depart " +
 	                         "FROM ligue l " +
 	                         "LEFT JOIN employe e ON l.ID_Ligue = e.ID_Ligue " +
 	                         "ORDER BY l.ID_Ligue";
@@ -61,12 +61,12 @@ public class JDBC implements Passerelle
 	            }
 
 	            // Vérifier si l'employé est présent
-	            if (resultSet.getObject("ID_Employé") != null) {
-	                int idEmploye = resultSet.getInt("ID_Employé");
-	                String nomEmploye = resultSet.getString("Nom_Employé");
-	                String prenomEmploye = resultSet.getString("Prenom_Employé");
-	                String mailEmploye = resultSet.getString("Mail_Employé");
-	                String passwordEmploye = resultSet.getString("MDP_Employé");
+	            if (resultSet.getObject("ID_Employe") != null) {
+	                int idEmploye = resultSet.getInt("ID_Employe");
+	                String nomEmploye = resultSet.getString("Nom_Employe");
+	                String prenomEmploye = resultSet.getString("Prenom_Employe");
+	                String mailEmploye = resultSet.getString("Mail_Employe");
+	                String passwordEmploye = resultSet.getString("MDP_Employe");
 	                LocalDate dateArrivee = resultSet.getDate("Date_Arrivee") != null ? resultSet.getDate("Date_Arrivee").toLocalDate() : null;
 	                LocalDate dateDepart = resultSet.getDate("Date_Depart") != null ? resultSet.getDate("Date_Depart").toLocalDate() : null;
 
@@ -81,11 +81,11 @@ public class JDBC implements Passerelle
 	        ResultSet rootResult = instructionRoot.executeQuery(requeteRoot);
 
 	        if (rootResult.next()) {
-	            int id = rootResult.getInt("ID_Employé");
-	            String nom = rootResult.getString("Nom_Employé");
-	            String prenom = rootResult.getString("Prenom_Employé");
-	            String mail = rootResult.getString("Mail_Employé");
-	            String password = rootResult.getString("MDP_Employé");
+	            int id = rootResult.getInt("ID_Employe");
+	            String nom = rootResult.getString("Nom_Employe");
+	            String prenom = rootResult.getString("Prenom_Employe");
+	            String mail = rootResult.getString("Mail_Employe");
+	            String password = rootResult.getString("MDP_Employe");
 	            LocalDate dateArrivee = rootResult.getDate("Date_Arrivee") != null ? rootResult.getDate("Date_Arrivee").toLocalDate() : null;
 	            LocalDate dateDepart = rootResult.getDate("Date_Depart") != null ? rootResult.getDate("Date_Depart").toLocalDate() : null;
 
@@ -142,35 +142,36 @@ public class JDBC implements Passerelle
 	}
 	
 	@Override
-	public int insert(Employe employe) {
-		String query = "INSERT INTO employe (nom, prenom, mail, password, dateArrive, dateDepart, ligue_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-	
-		try (PreparedStatement instruction = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-			// Remplissage des paramètres
-			instruction.setString(1, employe.getNom());
-			instruction.setString(2, employe.getPrenom());
-			instruction.setString(3, employe.getMail());
-			instruction.setString(4, employe.getPassword());
-			instruction.setDate(5, employe.getDateArrivee() != null ? java.sql.Date.valueOf(employe.getDateArrivee()) : null);
-			instruction.setDate(6, employe.getDateDepart() != null ? java.sql.Date.valueOf(employe.getDateDepart()) : null);
-			instruction.setObject(7, employe.getLigue() != null ? employe.getLigue().getId() : null);
-	
-			
-			instruction.executeUpdate();
-	
-			// Récupération de l'ID généré
-			try (ResultSet id = instruction.getGeneratedKeys()) {
-				if (id.next()) {
-					return id.getInt(1); // Retourne l'ID
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace(); 
-		}
-	
-		// Retourne -1 si une erreur
-		return -1;
+	public int insert(Employe employe) throws SauvegardeImpossible {
+
+	        try (PreparedStatement instruction = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+	            if (isRoot) {
+	                instruction.setString(1, employe.getNom());
+	                instruction.setString(2, employe.getPassword());
+	            } else {
+	                instruction.setString(1, employe.getNom());
+	                instruction.setString(2, employe.getPrenom());
+	                instruction.setString(3, employe.getMail());
+	                instruction.setString(4, employe.getPassword());
+	                instruction.setDate(5, employe.getDateArrivee() != null ? java.sql.Date.valueOf(employe.getDateArrivee()) : null);
+	                instruction.setDate(6, employe.getDateDepart() != null ? java.sql.Date.valueOf(employe.getDateDepart()) : null);
+	                instruction.setInt(7, employe.getLigue().getId());
+	            }
+
+	            instruction.executeUpdate();
+
+	            try (ResultSet id = instruction.getGeneratedKeys()) {
+	                if (id.next()) {
+	                    return id.getInt(1);
+	                }
+	            }
+	        }
+	    } catch (SQLException e) {
+	        throw new SauvegardeImpossible("Erreur lors de l'insertion de l'employé.", e);
+	    }
+	    return -1; // Retourne -1 si une erreur se produit
 	}
+
 
 	@Override
 	public void update(Ligue ligue) throws SauvegardeImpossible {
