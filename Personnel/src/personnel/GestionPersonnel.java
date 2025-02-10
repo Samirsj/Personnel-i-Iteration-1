@@ -149,9 +149,23 @@ public class GestionPersonnel implements Serializable
 	}
 
 	public Employe getRoot() {
-	    return root;
+		// Récupère le root depuis la base de données
+		if (root == null) {
+			// Si root n'est pas encore chargé en mémoire, le charger depuis la base
+			try {
+				root = passerelle.getRoot();
+			} catch (Exception e) {
+				// Gérer l'exception en cas d'erreur
+				e.printStackTrace();
+			}
+		}
+		return root;
 	}
-
+	
+	Ajoutez la méthode removeRoot si nécessaire pour empêcher la suppression accidentelle du root
+	public void removeRoot() {
+		if (root != null) {
+			throw new ImpossibleDeSupprimerRoot();
 
 	public void update(Ligue ligue) throws SauvegardeImpossible
 	{
