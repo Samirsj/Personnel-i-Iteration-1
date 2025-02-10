@@ -204,6 +204,26 @@ public class JDBC implements Passerelle
 
 
 	@Override
+	public void updateAdministrateur(Ligue ligue) throws SauvegardeImpossible {
+    	try {
+        	String query = "UPDATE ligue SET ID_Administrateur = ? WHERE ID_Ligue = ?";
+        	PreparedStatement instruction = connection.prepareStatement(query);
+        
+        	if (ligue.getAdministrateur() != null) {
+           		instruction.setInt(1, ligue.getAdministrateur().getId());
+        	} else {
+            	instruction.setNull(1, java.sql.Types.INTEGER);
+        	}
+        		instruction.setInt(2, ligue.getId());
+
+        	instruction.executeUpdate();
+    	} catch (SQLException exception) {
+        	throw new SauvegardeImpossible("Erreur lors de la mise à jour de l’administrateur.", exception);
+    	}
+	}
+
+
+	@Override
 	public void update(Ligue ligue) throws SauvegardeImpossible {
 
     	try {
