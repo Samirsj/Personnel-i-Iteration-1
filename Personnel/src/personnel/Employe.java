@@ -46,36 +46,14 @@ public class Employe implements Serializable, Comparable<Employe>
         this.dateDepart = dateDepart;
     
 
-        // Insertion dans la base de données pour root
-        if ("root".equals(nom)) {
-            try {
-                this.id = gestionPersonnel.insert(this);
-            }
+        // Insertion dans la base de données pour l'employé
+        try {
+            this.id = gestionPersonnel.insert(this);
+        } catch (Exception e) {
+            throw new ExceptionD("Erreur lors de l'ajout de l'employé dans la base de données", e);
         }
     }
     
-    
-    public Employe(GestionPersonnel gestionPersonnel, int id, Ligue ligue, String nom, String prenom, String mail, String password, LocalDate dateArrivee, LocalDate dateDepart) {
-        this.gestionPersonnel = gestionPersonnel;
-        this.id = id;
-        this.nom = nom;
-        this.prenom = prenom;
-        this.mail = mail;
-        this.password = password;
-        this.dateArrive = dateArrivee;
-        this.dateDepart = dateDepart;
-        this.ligue = ligue;
-    }
-
-
-     /**
-     * Surcharge du constructeur : création d'un employé sans dates.
-     */
-
-    public Employe(GestionPersonnel gestionPersonnel, Ligue ligue, String nom, String prenom, String mail, String password)
-            throws SauvegardeImpossible, ExceptionD {
-        this(gestionPersonnel, ligue, nom, prenom, mail, password, null, null);
-    }
 
      /**
      * Constructeur spécial pour ajouter le Root
@@ -97,8 +75,23 @@ public class Employe implements Serializable, Comparable<Employe>
         }
     }
 
-
     /**
+     * Surcharge du constructeur : création d'un employé à partir de données lues dans la base de données.
+     * Utilisé lorsqu'un employé doit être recréé à partir des informations stockées dans la base.
+     */
+    public Employe(GestionPersonnel gestionPersonnel, int id, Ligue ligue, String nom, String prenom, String mail, String password, LocalDate dateArrivee, LocalDate dateDepart) {
+        this.gestionPersonnel = gestionPersonnel;
+        this.id = id;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.mail = mail;
+        this.password = password;
+        this.dateArrive = dateArrivee;
+        this.dateDepart = dateDepart;
+        this.ligue = ligue;
+
+
+/**
      * Retourne vrai ssi l'employé est administrateur de la ligue
      * passée en paramètre.
      * @return vrai ssi l'employé est administrateur de la ligue
