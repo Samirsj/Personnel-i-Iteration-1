@@ -239,5 +239,15 @@ public class JDBC implements Passerelle
     	}
 	}	
 }
-	
+
+@Override
+public void delete(Employe employe) throws SauvegardeImpossible {
+    String query = "DELETE FROM employe WHERE ID_Employe = ?";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+        statement.setInt(1, employe.getId());
+        statement.executeUpdate();
+    } catch (SQLException e) {
+        throw new SauvegardeImpossible("Erreur lors de la suppression de l'employé.", e);
+    }
+}
 	
