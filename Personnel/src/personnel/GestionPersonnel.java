@@ -168,14 +168,22 @@ public class GestionPersonnel implements Serializable
 			throw new ImpossibleDeSupprimerRoot();
 
 	public void update(Ligue ligue) throws SauvegardeImpossible
-	{
+		{
 	    if (passerelle != null)
 	        passerelle.update(ligue);
+		}
 	}
 }
 
+	// Appelle méthode supression
+	public void deleteEmploye(Employe employe) throws SauvegardeImpossible {
+    	passerelle.delete(employe);
+	}
+
+	public void delete(Ligue ligue) throws SauvegardeImpossible
+	{
+		if (passerelle != null)
+			passerelle.delete(ligue);
+	}
 }
-// Appelle méthode supression
-public void deleteEmploye(Employe employe) throws SauvegardeImpossible {
-    passerelle.delete(employe);
-}
+

@@ -12,5 +12,6 @@ public interface Passerelle
 	public void update(Employe employe) throws SauvegardeImpossible;
 	//Ajout delete
 	public void delete(Employe employe) throws SauvegardeImpossible;
+	public void delete(Ligue ligue) throws SauvegardeImpossible;
 
 }
