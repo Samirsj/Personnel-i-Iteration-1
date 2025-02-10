@@ -53,6 +53,7 @@ public class JDBC implements Passerelle
 	        while (resultSet.next()) {
 	            int idLigue = resultSet.getInt("ID_Ligue");
 	            String nomLigue = resultSet.getString("Nom_Ligue");
+				Integer idAdmin = resultSet.getObject("ID_Administrateur") != null ? resultSet.getInt("ID_Administrateur") : null;
 
 	            // Si la ligue change alors nouvel objet Ligue
 	            if (idLigue != lastLigueId) {
@@ -72,6 +73,9 @@ public class JDBC implements Passerelle
 
 	                Employe employe = new Employe(gestionPersonnel, idEmploye, ligueActuelle, nomEmploye, prenomEmploye, mailEmploye, passwordEmploye, dateArrivee, dateDepart);
 	                ligueActuelle.getEmployes().add(employe);
+
+					if (idAdmin != null && idAdmin == idEmploye) {
+                    ligueActuelle.setAdministrateur(employe);
 	            }
 	        }
 
