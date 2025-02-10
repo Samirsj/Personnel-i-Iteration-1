@@ -143,6 +143,32 @@ public class JDBC implements Passerelle
 	
 	@Override
 	public int insert(Employe employe) throws SauvegardeImpossible {
+		 try {
+        	boolean isRoot = employe.getLigue() == null; // Un employé sans ligue est le root
+
+
+        
+        	if (!isRoot) {
+            	String checkLigueQuery = "SELECT ID_Ligue FROM ligue WHERE ID_Ligue = ?";
+            	try (PreparedStatement checkLigueStmt = connection.prepareStatement(checkLigueQuery)) {
+                	checkLigueStmt.setInt(1, employe.getLigue().getId());
+                	ResultSet ligueResult = checkLigueStmt.executeQuery();
+                	if (!ligueResult.next()) {
+                    	System.out.println("Erreur : La ligue associée n'existe pas !");
+                    	return -1; // Annule l'insertion
+                }
+            }
+        }
+
+
+       
+        String sql;
+        if (isRoot) {
+            sql = "INSERT INTO employe (Nom_Employe, MDP_Employe) VALUES (?, ?)";
+        } else {
+            sql = "INSERT INTO employe (Nom_Employe, Prenom_Employe, Mail_Employe, MDP_Employe, Date_Arrivee, Date_Depart, ID_Ligue) " +
+                  "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        }
 
 	        try (PreparedStatement instruction = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 	            if (isRoot) {
