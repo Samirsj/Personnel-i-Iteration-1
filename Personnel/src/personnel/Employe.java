@@ -1,9 +1,6 @@
 package personnel;
-
 import java.io.Serializable;
 import java.time.LocalDate;
-
-
 
 /**
  * Employé d'une ligue hébergée par la M2L. Certains peuvent
@@ -13,307 +10,249 @@ import java.time.LocalDate;
  * il faut passer la méthode {@link Ligue#addEmploye addEmploye}.
  */
 
-     /**
-     * Constructeur principal pour ajouter un employé avec toutes ses données
-     */
-
 public class Employe implements Serializable, Comparable<Employe>
 {
-    private static final long serialVersionUID = 4795721718037994734L;
-    private String nom, prenom, password, mail;
-    private Ligue ligue;
-    private GestionPersonnel gestionPersonnel;
-    private LocalDate dateArrive;
-    private LocalDate dateDepart;
-    private int id; // Ajout de l'ID
+	private static final long serialVersionUID = 4795721718037994734L;
+	private String nom, prenom, password, mail;
+	private Ligue ligue;
+	private GestionPersonnel gestionPersonnel;
+	private LocalDate dateArrivee;
+	private LocalDate dateDepart;
+	private int id;
 
-    Employe(GestionPersonnel gestionPersonnel, Ligue ligue, String nom, String prenom, String mail, String password, LocalDate dateArrive, LocalDate dateDepart)
-            throws ExceptionD
-    {
-        this.gestionPersonnel = gestionPersonnel;
-        this.nom = nom;
-        this.prenom = prenom;
-        this.password = password;
-        this.mail = mail;
-        this.ligue = ligue;
-        
 
-        if (dateArrive == null || dateDepart == null || dateDepart.isBefore(dateArrive) ) {
-            throw new ExceptionD();
-        }
+	Employe(GestionPersonnel gestionPersonnel, Ligue ligue, String nom, String prenom, String mail, String password, LocalDate dateArrivee, LocalDate dateDepart)
+	throws ExceptionD, SauvegardeImpossible
+	{
+		this.gestionPersonnel = gestionPersonnel;
+		this.nom = nom;
+		this.prenom = prenom;
+		this.mail = mail;
+		this.ligue = ligue;
+		this.password = password;
+		if (dateDepart.isBefore(dateArrivee)) 
+			throw new ExceptionD();
+		this.dateArrivee = dateArrivee;
+		this.dateDepart = dateDepart;
+		this.id = gestionPersonnel.insert(this);
+	}
 
-        this.dateArrive = dateArrive;
-        this.dateDepart = dateDepart;
-    
+	Employe(int id, GestionPersonnel gestionPersonnel, Ligue ligue, String nom, String prenom,
+		String mail, String password, LocalDate dateArrivee, LocalDate dateDepart, boolean FonctionEmploye)
+		throws SauvegardeImpossible, ExceptionD
+	{
+		this.id = id;
+		this.gestionPersonnel = gestionPersonnel;
+		this.nom = nom;
+		this.prenom = prenom;
+		this.mail = mail;
+		this.ligue = ligue;
+		this.password = password;
+		if (dateDepart.isBefore(dateArrivee)) throw new ExceptionD();
+		this.dateArrivee = dateArrivee;
+		this.dateDepart = dateDepart;
+		if (FonctionEmploye && ligue != null)
+			this.ligue.setAdministrateur(this);
+	}
 
-        // Insertion dans la base de données pour l'employé
-        try {
-            this.id = gestionPersonnel.insert(this);
-        } catch (Exception e) {
-            throw new ExceptionD("Erreur lors de l'ajout de l'employé dans la base de données", e);
-        }
+	/**
+	 * Retourne vrai ssi l'employé est administrateur de la ligue
+	 * passée en paramètre.
+	 * @return vrai ssi l'employé est administrateur de la ligue
+	 * passée en paramètre.
+	 * @param ligue la ligue pour laquelle on souhaite vérifier si this
+	 * est l'admininstrateur.
+	 */
+
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+
+	/**
+	 * Retourne le nom de l'employé.
+	 * @return le nom de l'employé.
+	 */
+
+	public String getNom()
+	{
+		return nom;
+	}
+
+	/**
+	 * Change le nom de l'employé.
+	 * @param nom le nouveau nom.
+	 */
+
+	public void setNom(String nom) throws SauvegardeImpossible
+	{
+		this.nom = nom;
+		gestionPersonnel.update(this);
+	}
+
+	/**
+	 * Retourne le prénom de l'employé.
+	 * @return le prénom de l'employé.
+	 */
+
+	public String getPrenom()
+	{
+		return prenom;
+	}
+	
+
+	public boolean estAdmin(Ligue ligue)
+	{
+		return ligue.getAdministrateur() == this;
+	}
+
+	/**
+	 * Retourne vrai ssi l'employé est le root.
+	 * @return vrai ssi l'employé est le root.
+	 */
+
+	public boolean estRoot()
+	{
+		return gestionPersonnel.getRoot() == this;
+	}
+
+
+	/**
+	 * Change le prénom de l'employé.
+	 * @param prenom le nouveau prénom de l'employé.
+	 */
+
+	public void setPrenom(String prenom) throws SauvegardeImpossible
+	{
+		this.prenom = prenom;
+		gestionPersonnel.update(this);
+	}
+
+	/**
+	 * Retourne le mail de l'employé.
+	 * @return le mail de l'employé.
+	 */
+
+	public String getMail()
+	{
+		return mail;
+	}
+
+	/**
+	 * Change le mail de l'employé.
+	 * @param mail le nouveau mail de l'employé.
+	 */
+
+	public void setMail(String mail) throws SauvegardeImpossible
+	{
+		this.mail = mail;
+		gestionPersonnel.update(this);
+	}
+
+	/**
+	 * Retourne vrai ssi le password passé en paramètre est bien celui
+	 * de l'employé.
+	 * @return vrai ssi le password passé en paramètre est bien celui
+	 * de l'employé.
+	 * @param password le password auquel comparer celui de l'employé.
+	 */
+
+	public boolean checkPassword(String password)
+	{
+		return this.password.equals(password);
+	}
+
+	/**
+	 * Change le password de l'employé.
+	 * @param password le nouveau password de l'employé.
+	 */
+
+	public void setPassword(String password) throws SauvegardeImpossible
+	{
+		this.password = password;
+		gestionPersonnel.update(this);
+	}
+
+	public String getPassword()
+	{
+		return password;
+	}
+
+	/**
+	 * Retourne la ligue à laquelle l'employé est affecté.
+	 * @return la ligue à laquelle l'employé est affecté.
+	 */
+
+	public Ligue getLigue()
+	{
+		return ligue;
+	}
+
+	/**
+	 * Supprime l'employé. Si celui-ci est un administrateur, le root
+	 * récupère les droits d'administration sur sa ligue.
+		 * @throws SauvegardeImpossible
+		 */
+
+		public void remove() throws SauvegardeImpossible
+	{
+		Employe root = gestionPersonnel.getRoot();
+		if (this != root)
+		{
+			if (estAdmin(getLigue()))
+				getLigue().setAdministrateur(root);
+			getLigue().remove(this);
+			gestionPersonnel.delete(this);
+		}
+		else
+			throw new ImpossibleDeSupprimerRoot();
+	}
+
+	public LocalDate getDateArrivee() {
+        return dateArrivee;
     }
-    
 
-     /**
-     * Constructeur spécial pour ajouter le Root
-     */
-
-    public Employe(GestionPersonnel gestionPersonnel, String nom, String password) throws SauvegardeImpossible {
-        this.gestionPersonnel = gestionPersonnel;
-        this.nom = nom;
-        this.password = password;
-        this.prenom = "";
-        this.mail = "";
-        this.ligue = null; // Le root n'est pas lié à une ligue
-
-        // Insérer base de données
-        try {
-            this.id = gestionPersonnel.insert(this);
-        } catch (Exception e) {
-            throw new SauvegardeImpossible("Erreur lors de l'insertion du Root en base", e);
-        }
-    }
-
-    /**
-     * Surcharge du constructeur : création d'un employé à partir de données lues dans la base de données.
-     * Utilisé lorsqu'un employé doit être recréé à partir des informations stockées dans la base.
-     */
-    public Employe(GestionPersonnel gestionPersonnel, int id, Ligue ligue, String nom, String prenom, String mail, String password, LocalDate dateArrivee, LocalDate dateDepart) {
-        this.gestionPersonnel = gestionPersonnel;
-        this.id = id;
-        this.nom = nom;
-        this.prenom = prenom;
-        this.mail = mail;
-        this.password = password;
-        this.dateArrive = dateArrivee;
-        this.dateDepart = dateDepart;
-        this.ligue = ligue;
-
-
-/**
-     * Retourne vrai ssi l'employé est administrateur de la ligue
-     * passée en paramètre.
-     * @return vrai ssi l'employé est administrateur de la ligue
-     * passée en paramètre.
-     * @param ligue la ligue pour laquelle on souhaite vérifier si this
-     * est l'admininstrateur.
-     */
-    
-     // Getter 
-     public int getId() 
-     {
-        return id;
-     }
-
-
-
-    public boolean estAdmin(Ligue ligue)
-    {
-        return ligue.getAdministrateur() == this;
-    }
-
-    /**
-     * Retourne vrai ssi l'employé est le root.
-     * @return vrai ssi l'employé est le root.
-     */
-
-    public boolean estRoot()
-    {
-        return gestionPersonnel.getRoot() == this;
-    }
-
-    /**
-     * Retourne le nom de l'employé.
-     * @return le nom de l'employé.
-     */
-
-    public String getNom()
-    {
-        return nom;
-    }
-
-    /**
-     * Change le nom de l'employé.
-     * @param nom le nouveau nom.
-     */
-
-    public void setNom(String nom)
-    {
-        this.nom = nom;
-        gestionPersonnel.update(this);
-    }
-
-    /**
-     * Retourne le prénom de l'employé.
-     * @return le prénom de l'employé.
-     */
-
-    public String getPrenom()
-    {
-        return this.prenom;
-    }
-
-    /**
-     * Change le prénom de l'employé.
-     * @param prenom le nouveau prénom de l'employé.
-     */
-
-    public void setPrenom(String prenom)
-    {
-        this.prenom = prenom;
-        gestionPersonnel.update(this);
-    }
-
-    /**
-     * Retourne le mail de l'employé.
-     * @return le mail de l'employé.
-     */
-
-    public String getMail()
-    {
-        return this.mail;
-    }
-
-    /**
-     * Change le mail de l'employé.
-     * @param mail le nouveau mail de l'employé.
-     */
-
-    public void setMail(String mail)
-    {
-        this.mail = mail;
-        gestionPersonnel.update(this);
-    }
-    /**
-     * Retourne la date d'arrivée de l'employé.
-     * @return la date d'arrivée de l'employé.
-     */
-
-    public LocalDate getDateArrivee()
-    {
-        return this.dateArrive;
-    }
-
-    /**
-     * Retourne la date d'arrivée de l'employé.
-     * @return la date d'arrivée de l'employé.
-     */
-
-    public void setDateArrivee(LocalDate dateArrive)
-            throws ExceptionD
-    {
-        if (dateArrive == null  || dateDepart.isBefore(dateArrive)) {
-            throw new ExceptionD();
-        }
-        else {
-
-            this.dateArrive = dateArrive;
-            gestionPersonnel.update(this);
-        }
-    }
-
-    /**
-     * Modifie la date de départ de l'employé.
-     * @return la date de départ de l'employé.
-     */
-
-    public LocalDate getDateDepart()
-    {
-        return this.dateDepart;
-    }
-
-    /**
-     * Modifie la date de départ de l'employé.
-     * @return la date de départ de l'employé.
-     */
-
-    public void setDateDepart(LocalDate dateDepart)
-            throws ExceptionD
-    {
-        if (dateDepart == null || dateDepart.isBefore(dateArrive)) {
-            throw new ExceptionD();
-        }
-        else {
-            this.dateDepart = dateDepart;
-            gestionPersonnel.update(this);
-        }   
+	public LocalDate getDateDepart() {
+        return dateDepart;
     }
 
 
-    /**
-     * Retourne vrai ssi le password passé en paramètre est bien celui
-     * de l'employé.
-     * @return vrai ssi le password passé en paramètre est bien celui
-     * de l'employé.
-     * @param password le password auquel comparer celui de l'employé.
-     */
+	public void setDateArrivee(LocalDate dateArrivee) throws SauvegardeImpossible
+			 {
+				 this.dateArrivee = dateArrivee;
+				 gestionPersonnel.update(this);
+			 }
 
-    public boolean checkPassword(String password)
-    {
-        return this.password.equals(password);
-    }
+	 public void setDateDepart(LocalDate dateDepart) throws SauvegardeImpossible
+			 {
+				 this.dateDepart = dateDepart;
+				 gestionPersonnel.update(this);
+			 }
 
-    /**
-     * Change le password de l'employé.
-     * @param password le nouveau password de l'employé.
-     */
 
-    public String getPassword() {
-        return password;
-    }
+	@Override
+	public int compareTo(Employe autre)
+	{
+		int cmp = getNom().compareTo(autre.getNom());
+		if (cmp != 0)
+			return cmp;
+		return getPrenom().compareTo(autre.getPrenom());
+	}
 
-    public void setPassword(String password)
-    {
-        this.password= password;
-        gestionPersonnel.update(this);
-    }
+	@Override
+	public String toString()
+	{
+		String res = nom + " " + prenom + " " + mail + " (";
+		if (estRoot())
+			res += "super-utilisateur";
+		else
+			res += ligue.toString();
+		return res + ")";
+	}
 
-    /**
-     * Retourne la ligue à laquelle l'employé est affecté.
-     * @return la ligue à laquelle l'employé est affecté.
-     */
-
-    public Ligue getLigue()
-    {
-        return this.ligue;
-    }
-
-    /**
-     * Supprime l'employé. Si celui-ci est un administrateur, le root
-     * récupère les droits d'administration sur sa ligue.
-     */
-
-    public void remove()
-    {
-        Employe root = gestionPersonnel.getRoot();
-        if (this != root)
-        {
-            if (estAdmin(getLigue()))
-                getLigue().setAdministrateur(root);
-            getLigue().remove(this);
-        }
-        else
-            throw new ImpossibleDeSupprimerRoot();
-    }
-
-    @Override
-    public int compareTo(Employe autre)
-    {
-        int cmp = getNom().compareTo(autre.getNom());
-        if (cmp != 0)
-            return cmp;
-        return getPrenom().compareTo(autre.getPrenom());
-    }
-
-    @Override
-    public String toString()
-    {
-        String res = nom + " " + prenom + " " + mail + " (";
-        if (estRoot())
-            res += "super-utilisateur";
-        else
-            res += ligue.toString();
-        return res + ")";
-    }
 }

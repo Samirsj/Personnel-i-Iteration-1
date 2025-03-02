@@ -1,9 +1,12 @@
 package commandLine;
 
-import personnel.*;
-import commandLineMenus.*;
-import static commandLineMenus.rendering.examples.util.InOut.*;
-
+import commandLineMenus.Action;
+import commandLineMenus.Menu;
+import commandLineMenus.Option;
+import static commandLineMenus.rendering.examples.util.InOut.getString;
+import personnel.ExceptionD;
+import personnel.GestionPersonnel;
+import personnel.SauvegardeImpossible;
 public class PersonnelConsole
 {
 	private GestionPersonnel gestionPersonnel;
@@ -71,12 +74,12 @@ public class PersonnelConsole
 		return ok;
 	}
 	
-	public static void main(String[] args)
+	public static void main(String[] args) throws SauvegardeImpossible, ExceptionD
 	{
 		PersonnelConsole personnelConsole = 
 				new PersonnelConsole(GestionPersonnel.getGestionPersonnel());
-		if (personnelConsole.verifiePassword()) {
-			personnelConsole.start();}
-	
+		if (personnelConsole.verifiePassword())
+			personnelConsole.start();
 	}
+	
 }

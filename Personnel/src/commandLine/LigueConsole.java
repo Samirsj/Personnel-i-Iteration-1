@@ -3,8 +3,8 @@ package commandLine;
 import static commandLineMenus.rendering.examples.util.InOut.getString;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 
 import commandLineMenus.List;
 import commandLineMenus.Menu;
@@ -73,7 +73,6 @@ public class LigueConsole
 		Menu menu = new Menu("Editer " + ligue.getNom());
 		menu.add(afficher(ligue));
 		menu.add(gererEmployes(ligue));
-		menu.add(changerAdministrateur(ligue));
 		menu.add(changerNom(ligue));
 		menu.add(supprimer(ligue));
 		menu.addBack("q");
@@ -83,49 +82,15 @@ public class LigueConsole
 	private Option changerNom(final Ligue ligue)
 	{
 		return new Option("Renommer", "r", 
-				() -> {ligue.setNom(getString("Nouveau nom : "));});
-	}
-	
-	private Option selectionnerEmployé(Ligue ligue)
-	{
-	    return new List<>("Selectionner un employé", "s", 
-	            () -> new ArrayList<>(ligue.getEmployes()),
-	            employe -> editerEmployer(employe));
-	}
-
-
-	private Option ajouterEmploye(final Ligue ligue)
-	{
-		return new Option("ajouter un employé", "a",
-				() -> 
-				{
+				() -> {
 					try {
-						ligue.addEmploye(getString("nom : "), 
-							getString("prenom : "), getString("mail : "), 
-							getString("password : ") , LocalDate.parse(getString("date arrive : ")) , 
-							LocalDate.parse(getString("date depart : ")) 
-							);
-					} catch (ExceptionD e) {
-						// TODO Auto-generated catch block
-						System.out.println("Erreur : La date de départ ne peut pas être avant la date d'arrivée.");
+						ligue.setNom(getString("Nouveau nom : "));
+					} catch (SauvegardeImpossible e) {
+						System.err.println("Impossible de sauvegarder le nouveau nom : " + e.getMessage());
 					}
-					catch (DateTimeParseException s) {
-						System.out.println("Format invalide. Veuillez entrer une date au format yyyy-MM-dd.");			}
-				}
-		);
+				});
 	}
 
-	private Menu gererEmployes(Ligue ligue)
-	{
-		Menu menu = new Menu("Gérer les employés de " + ligue.getNom(), "e");
-		menu.add(afficherEmployes(ligue));
-		menu.add(ajouterEmploye(ligue));
-		menu.add(selectionnerEmployé(ligue));
-		menu.addBack("q");
-		return menu;
-	}
-	
-	
 	private List<Ligue> selectionnerLigue()
 	{
 		return new List<Ligue>("Sélectionner une ligue", "e", 
@@ -134,43 +99,93 @@ public class LigueConsole
 				);
 	}
 	
+	private Option ajouterEmploye(final Ligue ligue)
+	{
+		return new Option("ajouter un employé", "a",
+				() -> 
+		
+				{
+					try {
+					ligue.addEmploye(getString("nom : "), 
+						getString("prenom : "), getString("mail : "), 
+						getString("password : "), LocalDate.parse(getString("Saisir date arriver : ")) , LocalDate.parse(getString("Saisir date depart : ")));
+					}catch(ExceptionD e) {
+						System.out.println("La date d'arrivée est avant la date de départ");
+						
+					}
+					catch(DateTimeParseException e) {
+						System.out.println("Format de date invalide. Veuillez saisir un bon format de date ex: AAAA-MM-JJ");
+					} catch (SauvegardeImpossible e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+		);
+	}
+	
+	private Menu gererEmployes(Ligue ligue)
+	{
+		Menu menu = new Menu("Gérer les employés de " + ligue.getNom(), "e");
+		menu.add(afficherEmployes(ligue));
+		menu.add(ajouterEmploye(ligue));
+		menu.add(selectEmploye(ligue));
+		menu.addBack("q");
+		return menu;
+	}
 	
 	private Menu editerEmployer(Employe employe) {
 		Menu menu = new Menu("Gerer :" + employe.getNom());
 		menu.add(modifierEmploye(employe));
 		menu.add(supprimerEmploye(employe));
+		menu.add(changerAdmin(employe));
+		
 		menu.addBack("q");
 		return menu;
 	}
 	
+	private Option changerAdmin(final Employe employe) {
+		return new Option("Nommer l'administrateur", "a", () -> {
+			try {
+				employe.getLigue().setAdministrateur(employe);
+			} catch (SauvegardeImpossible e) {
+				System.err.println("Impossible de sauvegarder le changement d'administrateur : " + e.getMessage());
+			}
+		});
+	}
+
 	private Option supprimerEmploye(final Employe employe)
 	{
-		return new Option("Supprimer Employé", "s" , () -> employe.remove());
+		return new Option("Supprimer Employe", "s", 
+			() -> {
+				try {
+					employe.remove();
+				} catch (SauvegardeImpossible e) {
+					System.err.println("Impossible de sauvegarder la suppression : " + e.getMessage());
+				}
+			});
 	}
 	
 
-	
-	private List<Employe> changerAdministrateur(final Ligue ligue)
-	{
-	    return new List<>("Changer l'administrateur", "c", 
-	        () -> new ArrayList<>(ligue.getEmployes()),
-	        (index, element) -> {
-	            ligue.setAdministrateur(element);
-	            System.out.println("Le nouvel administrateur est : " + element);
-	        }
-	    );
-	}
-	
 	private Option modifierEmploye(final Employe employe)
 	{
 		return employeConsole.editerEmploye(employe);
 	}
 	
-
-	
 	private Option supprimer(Ligue ligue)
 	{
-		return new Option("Supprimer", "d", () -> {ligue.remove();});
+		return new Option("Supprimer", "d", () -> {
+			try {
+				ligue.remove();
+			} catch (SauvegardeImpossible e) {
+				System.err.println("Impossible de sauvegarder la suppression : " + e.getMessage());
+			}
+		});
 	}
 	
-}
+	private Option selectEmploye(Ligue ligue)
+	{
+		return new List<>("Selectionner un employe", "e", 
+				() -> new ArrayList<>(ligue.getEmployes()),
+				(nb) -> editerEmployer(nb));}
+	}
+	
