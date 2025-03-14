@@ -1,12 +1,10 @@
-
-CREATE TABLE `Ligue` (
+CREATE TABLE `ligue` (
     `ID_Ligue` int NOT NULL AUTO_INCREMENT,
     `Nom_Ligue` varchar(50) DEFAULT NULL,
     PRIMARY KEY (`ID_Ligue`)
 );
 
-
-CREATE TABLE `Employe` (
+CREATE TABLE `employe` (
     `ID_Employé` int NOT NULL AUTO_INCREMENT,
     `Nom_Employé` varchar(20) DEFAULT NULL,
     `Prenom_Employé` varchar(20) DEFAULT NULL,
