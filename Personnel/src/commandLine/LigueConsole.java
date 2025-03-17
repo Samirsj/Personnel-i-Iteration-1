@@ -134,7 +134,7 @@ public class LigueConsole
 	}
 	
 	private Menu editerEmployer(Employe employe) {
-		Menu menu = new Menu("Gerer :" + employe.getNom());
+		Menu menu = new Menu("Gerer : " + employe.getNom());
 		menu.add(modifierEmploye(employe));
 		menu.add(supprimerEmploye(employe));
 		menu.add(changerAdmin(employe));

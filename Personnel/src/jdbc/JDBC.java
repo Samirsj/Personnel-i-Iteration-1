@@ -43,15 +43,15 @@ public class JDBC implements Passerelle
 		try
 		{
 			PreparedStatement instructionRoot;
-			instructionRoot = connection.prepareStatement("select ID_Employé, Prenom_Employé, Nom_Employé, ID_Ligue, MDP_Employé  from employe where ID_Ligue is null and ID_Employé  = 1");
+			instructionRoot = connection.prepareStatement("select ID_Employe, Prenom_Employe, Nom_Employe, ID_Ligue, MDP_Employe  from Employe where ID_Ligue is null and ID_Employe  = 1");
 			ResultSet root = instructionRoot.executeQuery();
 
 			if (!root.next()) {
-				gestionPersonnel.addRoot("roverveot", null, null, "rootpass",
+				gestionPersonnel.addRoot("root", null, null, "toor",
 					LocalDate.parse("2020-12-12"), LocalDate.parse("2020-12-13"));
 			} else {
-				gestionPersonnel.addRoot(root.getInt("ID_Employé"), root.getString("Nom_Employé"),
-					null, null, root.getString("MDP_Employé"),
+				gestionPersonnel.addRoot(root.getInt("ID_Employe"), root.getString("Nom_Employe"),
+					null, null, root.getString("MDP_Employe"),
 					LocalDate.parse("2020-12-12"), LocalDate.parse("2020-12-13"));
 			}
 
@@ -79,18 +79,18 @@ public class JDBC implements Passerelle
 						ligueCourante = gestionPersonnel.addLigue(idLigue,Ligue);
 						idLiguePrecedente = idLigue;
 						Employe employe = ligueCourante.addEmploye(
-								resultats.getInt("ID_Employé"),
-								resultats.getString("Nom_Employé"),
-								resultats.getString("Prenom_Employé"),
-								resultats.getString("Mail_Employé"),
-								resultats.getString("MDP_Employé"),
+								resultats.getInt("ID_Employe"),
+								resultats.getString("Nom_Employe"),
+								resultats.getString("Prenom_Employe"),
+								resultats.getString("Mail_Employe"),
+								resultats.getString("MDP_Employe"),
 								LocalDate.parse(resultats.getString("Date_Arrivee")),
 								resultats.getString("Date_Depart") != null ?
 									LocalDate.parse(resultats.getString("Date_Depart")) : null,
-								resultats.getBoolean("Fonction_Employé")
+								resultats.getBoolean("Fonction_Employe")
 
 							);
-						if (resultats.getBoolean("Fonction_Employé"))
+						if (resultats.getBoolean("Fonction_Employe"))
 						{
 							ligueCourante.setAdministrateur(employe);
 						}
@@ -157,7 +157,7 @@ public class JDBC implements Passerelle
 		try
 		{
 			PreparedStatement instruction;
-			instruction = connection.prepareStatement("insert into employe (Prenom_Employé, Nom_Employé, Mail_Employé, MDP_Employé, Date_Arrivee, Date_Depart, Fonction_Employé, ID_Ligue) " +
+			instruction = connection.prepareStatement("insert into employe (Prenom_Employe, Nom_Employe, Mail_Employe, MDP_Employe, Date_Arrivee, Date_Depart, Fonction_Employe, ID_Ligue) " +
 			"values(?, ?, ?, ?, ?, ?, ?, ?)",
 			Statement.RETURN_GENERATED_KEYS);
 
@@ -223,7 +223,7 @@ public class JDBC implements Passerelle
 		
 		{
 			PreparedStatement instruction = connection.prepareStatement(
-				"UPDATE employe SET Nom_Employé = (?), Prenom_Employé = (?), Mail_Employé = (?), MDP_Employé = (?), Date_Arrivee = (?), Date_Depart = (?), Fonction_Employé  = (?) WHERE ID_Employé = (?)");
+				"UPDATE employe SET Nom_Employe = (?), Prenom_Employe = (?), Mail_Employe = (?), MDP_Employe = (?), Date_Arrivee = (?), Date_Depart = (?), Fonction_Employe  = (?) WHERE ID_Employe = (?)");
 
 			instruction.setString(1, employe.getNom());
 			instruction.setString(2, employe.getPrenom());
