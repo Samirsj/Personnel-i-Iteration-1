@@ -251,37 +251,27 @@ public class JDBC implements Passerelle
 		}
 	}
 
-		@Override
-	public void delete(Employe employe) throws SauvegardeImpossible
-	{
-		try
-		{
-			PreparedStatement instruction = connection.prepareStatement(
-				"DELETE FROM employe WHERE id = ?"
-			);
-			instruction.setInt(1, employe.getId());
-			instruction.executeUpdate();
-		}
-		catch (SQLException exception)
-		{
-			throw new SauvegardeImpossible(exception);
-		}
+	@Override
+	public void delete(Employe employe) throws SauvegardeImpossible {
+	    String sql = "DELETE FROM employe WHERE ID_Employe = ?";
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setInt(1, employe.getId());
+	        stmt.executeUpdate();
+	    } catch (SQLException e) {
+	        throw new SauvegardeImpossible(e);
+	    }
 	}
 
+
 	@Override
-	public void delete(Ligue ligue) throws SauvegardeImpossible
-	{
-		try
-		{
-			PreparedStatement deleteLigue = connection.prepareStatement(
-				"DELETE FROM ligue WHERE ID_Ligue = ?"
-			);
-			deleteLigue.setInt(1, ligue.getIdLigue());
-			deleteLigue.executeUpdate();
-		}
-		catch (SQLException exception)
-		{
-			throw new SauvegardeImpossible(exception);
-		}
+	public void delete(Ligue ligue) throws SauvegardeImpossible {
+	    String sql = "DELETE FROM ligue WHERE ID_Ligue = ?";
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setInt(1, ligue.getIdLigue());
+	        stmt.executeUpdate();
+	    } catch (SQLException e) {
+	        throw new SauvegardeImpossible(e);
+	    }
 	}
+
 }

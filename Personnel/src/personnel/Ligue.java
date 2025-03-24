@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.HashSet;
+
 
 /**
  * Représente une ligue. Chaque ligue est reliée à une liste
@@ -154,15 +156,14 @@ public class Ligue implements Serializable, Comparable<Ligue>
 	 * de la ligue.
 	 */
 
-	public void remove() throws SauvegardeImpossible
-	{
-		for (Employe employe : new TreeSet<>(employes))
-		{
-			employe.remove();
-		}
-		gestionPersonnel.delete(this);
-		gestionPersonnel.remove(this);
+	public void remove() throws SauvegardeImpossible {
+	    for (Employe e : new HashSet<>(employes)) {
+	        e.remove(); // On supprime d'abord tous les employés
+	    }
+	    gestionPersonnel.remove(this); // Supprime la ligue en mémoire
+	    gestionPersonnel.delete(this); // 🔥 Supprime la ligue en base
 	}
+
 
 
 	@Override

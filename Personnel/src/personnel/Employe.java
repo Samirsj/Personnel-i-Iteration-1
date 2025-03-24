@@ -199,19 +199,18 @@ public class Employe implements Serializable, Comparable<Employe>
 		 * @throws SauvegardeImpossible
 		 */
 
-		public void remove() throws SauvegardeImpossible
-	{
-		Employe root = gestionPersonnel.getRoot();
-		if (this != root)
-		{
-			if (estAdmin(getLigue()))
-				getLigue().setAdministrateur(root);
-			getLigue().remove(this);
-			gestionPersonnel.delete(this);
-		}
-		else
-			throw new ImpossibleDeSupprimerRoot();
+	public void remove() throws SauvegardeImpossible {
+	    Employe root = gestionPersonnel.getRoot();
+	    if (this != root) {
+	        if (estAdmin(getLigue()))
+	            getLigue().setAdministrateur(root);
+	        getLigue().remove(this);
+	        gestionPersonnel.delete(this); // 🔥 très important !
+	    } else {
+	        throw new ImpossibleDeSupprimerRoot();
+	    }
 	}
+
 
 	public LocalDate getDateArrivee() {
         return dateArrivee;
